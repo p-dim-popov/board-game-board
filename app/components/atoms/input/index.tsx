@@ -1,14 +1,12 @@
-import React from "react";
+import React from 'react';
 
-type Props = Omit<React.InputHTMLAttributes<HTMLInputElement>, "className">
+type Props = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'className'>;
 
-export const Input: React.FC<Props> = (props) => {
-  return (
-    <input
-      className="bg-white focus:outline-none focus:shadow-outline border border-gray-300 rounded-lg py-2 px-4 block w-full appearance-none leading-normal"
-      type="email"
-      placeholder="jane@example.com"
-      {...props}
-    />
-  );
-};
+export const Input: React.FC<Props> = (props) => (
+  <input
+    className="focus:shadow-outline block w-full appearance-none rounded-lg border border-gray-300 bg-white py-2 px-4 leading-normal focus:outline-none"
+    type="email"
+    placeholder="jane@example.com"
+    {...props}
+  />
+);
