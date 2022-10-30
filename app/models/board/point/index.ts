@@ -2,12 +2,12 @@ import type { Point } from '~/models/point';
 import { PointOps } from '~/models/point';
 import { createMirrorMap } from '~/utils';
 
-export type BoardPoint = Point & {
+export type BoardPosition = Point & {
   id: string
   allowedNext: Point[]
 };
 
-const newBoardPoint = (point: Point, allowedNext: Point[]): BoardPoint => {
+const newBoardPoint = (point: Point, allowedNext: Point[]): BoardPosition => {
   if (!allowedNext.length) {
     throw new BoardPointOps.ConstructError('NO_NEXT_POINTS');
   }
