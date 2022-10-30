@@ -1,5 +1,5 @@
-import type { Point, MaybePoint } from '~/models/point.server';
-import { PointOps } from '~/models/point.server';
+import type { Point, MaybePoint } from '~/models/point/index';
+import { PointOps } from '~/models/point/index';
 
 describe('Point', () => {
   const sample: Point = { x: 1, y: 2 };
