@@ -1,21 +1,23 @@
-import type { BoardPosition } from '~/models/board/point';
+import type { BoardBox } from '~/models/board/box';
 import { createErrorClass } from '~/utils';
 import { PointOps } from '~/models/point';
 
 export type Board = {
-  positions: BoardPosition[];
+  boxes: BoardBox[];
 };
 
 const newBoard = (): Board => ({
-  positions: [],
+  boxes: [],
 });
 
-const setBoardPositions =
-  (positions: BoardPosition[]) =>
+const setBoardBoxes =
+  (boxes: BoardBox[]) =>
     (self: Board): Board => {
       if (
-        positions.some((p) =>
-          p.allowedNext.some((an) => !positions.some(PointOps.equals(an))),
+        boxes.some((b) =>
+          b.allowedNext.some(
+            (an) => !boxes.some((b1) => PointOps.equals(an)(b1.position)),
+          ),
         )
       ) {
         throw BoardConstructError.create('NEXT_POINT_NOT_DECLARED');
@@ -23,7 +25,7 @@ const setBoardPositions =
 
       return {
         ...self,
-        positions,
+        boxes,
       };
     };
 
@@ -33,6 +35,6 @@ const BoardConstructError = createErrorClass('BoardConstructError', [
 
 export const BoardOps = {
   new: newBoard,
-  setPositions: setBoardPositions,
+  setBoxes: setBoardBoxes,
   ConstructError: BoardConstructError,
 };
