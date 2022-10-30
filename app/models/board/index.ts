@@ -1,9 +1,9 @@
 import type { BoardPosition } from '~/models/board/point';
-import { createMirrorMap } from '~/utils';
+import { createErrorClass } from '~/utils';
 import { PointOps } from '~/models/point';
 
 export type Board = {
-  positions: BoardPosition[]
+  positions: BoardPosition[];
 };
 
 const newBoard = (): Board => ({
@@ -18,7 +18,7 @@ const setBoardPositions =
           p.allowedNext.some((an) => !positions.some(PointOps.equals(an))),
         )
       ) {
-        throw new BoardConstructError('NEXT_POINT_NOT_DECLARED');
+        throw BoardConstructError.create('NEXT_POINT_NOT_DECLARED');
       }
 
       return {
@@ -27,13 +27,9 @@ const setBoardPositions =
       };
     };
 
-class BoardConstructError extends Error {
-  static Type = createMirrorMap(['NEXT_POINT_NOT_DECLARED']);
-
-  constructor(public type: keyof typeof BoardConstructError.Type) {
-    super(type);
-  }
-}
+const BoardConstructError = createErrorClass('BoardConstructError', [
+  'NEXT_POINT_NOT_DECLARED',
+]);
 
 export const BoardOps = {
   new: newBoard,
