@@ -72,3 +72,4 @@ export function validateEmail(email: unknown): email is string {
 
 export * from './generateId';
 export * from './createMirrorMap';
+export * from './createErrorClass';
