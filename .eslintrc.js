@@ -53,6 +53,11 @@ module.exports = {
     '@typescript-eslint/no-throw-literal': 'off',
     'jsx-a11y/no-autofocus': 'off',
     'no-underscore-dangle': 'off',
+
+    'no-multi-spaces': 'warn',
+    'no-multiple-empty-lines': 'warn',
+    'no-trailing-spaces': 'warn',
+    'no-tabs': 'error',
   },
   ignorePatterns: ['/node_modules', '/build', '/public/build'],
 }
