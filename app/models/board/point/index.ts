@@ -23,6 +23,11 @@ const newBoardPoint = (point: Point, allowedNext: Point[]): BoardPosition => {
   };
 };
 
+const canBoardPositionNavigateToPoint =
+  (destination: Point) =>
+    (self: BoardPosition): boolean =>
+      self.allowedNext.some(PointOps.equals(destination));
+
 const BoardPointConstructError = createErrorClass('BoardPointConstructError', [
   'NO_NEXT_POINTS',
   'CURRENT_EXISTS_AS_NEXT',
@@ -30,5 +35,6 @@ const BoardPointConstructError = createErrorClass('BoardPointConstructError', [
 
 export const BoardPointOps = {
   new: newBoardPoint,
+  canNavigateToPoint: canBoardPositionNavigateToPoint,
   ConstructError: BoardPointConstructError,
 };

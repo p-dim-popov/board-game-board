@@ -1,5 +1,6 @@
 import { BoardPointOps } from '~/models/board/point';
 import { PointOps } from '~/models/point';
+import { applyArgs } from 'ts-functional-pipe';
 
 describe('Board Point Operations', () => {
   const point = PointOps.new(1, 2);
@@ -32,6 +33,30 @@ describe('Board Point Operations', () => {
       const badConstruct = () => BoardPointOps.new(point, [point]);
 
       expect(badConstruct).toThrow();
+    });
+  });
+
+  describe(BoardPointOps.canNavigateToPoint.name, () => {
+    it('should return true if destination point is in allowed next', () => {
+      const nextPoint = { ...point, x: point.x + 1 };
+      const isNextPoint = applyArgs(BoardPointOps).to((bp) =>
+        applyArgs(bp.new(point, [nextPoint])).to(
+          bp.canNavigateToPoint(nextPoint),
+        ),
+      );
+
+      expect(isNextPoint).toEqual(true);
+    });
+
+    it('should return false if destination point is not in allowed next', () => {
+      const nextPoint = { ...point, x: point.x + 1 };
+      const isNextPoint = applyArgs(BoardPointOps).to((bp) =>
+        applyArgs(bp.new(point, [{ ...nextPoint, x: nextPoint.x + 1 }])).to(
+          bp.canNavigateToPoint(nextPoint),
+        ),
+      );
+
+      expect(isNextPoint).toEqual(false);
     });
   });
 });
