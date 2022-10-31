@@ -43,4 +43,22 @@ describe('Point', () => {
       expect(result).toEqual(PointOps.new(1, 2));
     });
   });
+
+  describe(PointOps.fromTuple.name, () => {
+    it('should construct from tuple', () => {
+      expect(PointOps.fromTuple([1, 2])).toEqual(PointOps.new(1, 2));
+    });
+  });
+
+  describe(PointOps.fromTuples.name, () => {
+    it('should construct from tuples', () => {
+      expect(
+        PointOps.fromTuples([
+          [1, 2],
+          [3, 6],
+          [8, 1],
+        ]),
+      ).toEqual([PointOps.new(1, 2), PointOps.new(3, 6), PointOps.new(8, 1)]);
+    });
+  });
 });

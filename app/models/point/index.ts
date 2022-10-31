@@ -1,6 +1,6 @@
 export interface Point {
-  x: number
-  y: number
+  x: number;
+  y: number;
 }
 
 export type MaybePoint = Point | undefined | null;
@@ -16,4 +16,7 @@ export const PointOps = {
 
     return { x, y };
   },
+  fromTuple: (numbers: [number, number]): Point => PointOps.new(...numbers),
+  fromTuples: (numbers: [number, number][]): Point[] =>
+    numbers.map(PointOps.fromTuple),
 };
