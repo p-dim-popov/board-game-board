@@ -1,5 +1,5 @@
 import { BoardOps } from '~/models/board/index';
-import { applyArgs } from 'ts-functional-pipe';
+import { applyArgs, pipe } from 'ts-functional-pipe';
 import { BoardBoxOps } from '~/models/board/box';
 import { PointOps } from '~/models/point';
 
@@ -29,9 +29,9 @@ describe('Board Operations', () => {
       );
 
       expect(board.boxes).toEqual([
-        { ...one, id: PointOps.serialize(one), allowedNext: [two] },
-        { ...two, id: PointOps.serialize(two), allowedNext: [three] },
-        { ...three, id: PointOps.serialize(three), allowedNext: [one] },
+        { position: one, id: PointOps.serialize(one), allowedNext: [two] },
+        { position: two, id: PointOps.serialize(two), allowedNext: [three] },
+        { position: three, id: PointOps.serialize(three), allowedNext: [one] },
       ]);
     });
 
@@ -46,5 +46,50 @@ describe('Board Operations', () => {
 
       expect(failingConstruct).toThrow();
     });
+  });
+
+  describe(BoardOps.getDimensions.name, () => {
+    it.each([
+      [
+        [
+          [1, 2],
+          [1, 3],
+          [0, 3],
+          [0, 4],
+        ] as [number, number][],
+        { left: PointOps.new(0, 2), right: PointOps.new(1, 4) },
+      ],
+      [
+        [
+          [-1, 2],
+          [-1, 3],
+          [0, 3],
+          [0, 4],
+        ] as [number, number][],
+        { left: PointOps.new(-1, 2), right: PointOps.new(0, 4) },
+      ],
+    ])(
+      'should calculate board dimensions based on max points (%j, %j)',
+      (
+        tuples: [number, number][],
+        expectedResult: ReturnType<typeof BoardOps.getDimensions>,
+      ) => {
+        const [one, two, three, four] = PointOps.fromTuples(tuples);
+        const result = applyArgs().to(
+          pipe(
+            BoardOps.new,
+            BoardOps.setBoxes([
+              BoardBoxOps.new(one, [two]),
+              BoardBoxOps.new(two, [three]),
+              BoardBoxOps.new(three, [four]),
+              BoardBoxOps.new(four, [three]),
+            ]),
+            BoardOps.getDimensions,
+          ),
+        );
+
+        expect(result).toEqual(expectedResult);
+      },
+    );
   });
 });

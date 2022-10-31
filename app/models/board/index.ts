@@ -1,14 +1,17 @@
 import type { BoardBox } from '~/models/board/box';
 import { createErrorClass } from '~/utils';
+import type { Point } from '~/models/point';
 import { PointOps } from '~/models/point';
+import { from } from 'linq-to-typescript';
 
 export type Board = {
   boxes: BoardBox[];
 };
 
-const newBoard = (): Board => ({
-  boxes: [],
-});
+type BoardDimension = {
+  left: Point;
+  right: Point;
+};
 
 const setBoardBoxes =
   (boxes: BoardBox[]) =>
@@ -34,7 +37,36 @@ const BoardConstructError = createErrorClass('BoardConstructError', [
 ]);
 
 export const BoardOps = {
-  new: newBoard,
+  new: (): Board => ({
+    boxes: [],
+  }),
   setBoxes: setBoardBoxes,
+  getDimensions: (self: Board): BoardDimension => {
+    const enumerable = from(self.boxes);
+    const selfCriteria = <T>(x: T) => x;
+
+    const {
+      0: smallestX,
+      length: xLength,
+      [xLength - 1]: biggestX,
+    } = enumerable
+      .select((x) => x.position.x)
+      .orderBy(selfCriteria)
+      .toArray();
+
+    const {
+      0: smallestY,
+      length: yLength,
+      [yLength - 1]: biggestY,
+    } = enumerable
+      .select((x) => x.position.y)
+      .orderBy(selfCriteria)
+      .toArray();
+
+    return {
+      left: PointOps.new(smallestX, smallestY),
+      right: PointOps.new(biggestX, biggestY),
+    };
+  },
   ConstructError: BoardConstructError,
 };
