@@ -9,6 +9,7 @@ import {
   ScrollRestoration,
 } from '@remix-run/react';
 
+import { RecoilRoot } from 'recoil';
 import tailwindStylesheetUrl from './styles/tailwind.css';
 import { getUser } from './session.server';
 
@@ -31,16 +32,18 @@ export async function loader({ request }: LoaderArgs) {
 export default function App() {
   return (
     <html lang="en" className="h-full">
-      <head>
-        <Meta />
-        <Links />
-      </head>
-      <body className="h-full">
-        <Outlet />
-        <ScrollRestoration />
-        <Scripts />
-        <LiveReload />
-      </body>
+      <RecoilRoot>
+        <head>
+          <Meta />
+          <Links />
+        </head>
+        <body className="h-full">
+          <Outlet />
+          <ScrollRestoration />
+          <Scripts />
+          <LiveReload />
+        </body>
+      </RecoilRoot>
     </html>
   );
 }
