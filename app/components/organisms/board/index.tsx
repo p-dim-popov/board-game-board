@@ -35,7 +35,7 @@ export const BoardComponent: FunctionComponent = () => {
   return (
     <div className="flex flex-row">
       {range(dimensions.left.x, dimensions.right.x + 1).map((x) => (
-        <div className="flex flex-col-reverse">
+        <div key={x} className="flex flex-col-reverse">
           {range(dimensions.left.y, dimensions.right.y + 1).map((y) => {
             const currentPoint = PointOps.new(x, y);
             console.log(currentPoint);
