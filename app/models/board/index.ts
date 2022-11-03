@@ -2,7 +2,7 @@ import type { BoardBox } from '~/models/board/box';
 import { createErrorClass } from '~/utils';
 import type { Point } from '~/models/point';
 import { PointOps } from '~/models/point';
-import { from } from 'linq-to-typescript';
+import { List } from 'linqts-camelcase';
 
 export type Board = {
   boxes: BoardBox[];
@@ -42,7 +42,7 @@ export const BoardOps = {
   }),
   setBoxes: setBoardBoxes,
   getDimensions: (self: Board): BoardDimension => {
-    const enumerable = from(self.boxes);
+    const enumerable = new List(self.boxes);
     const selfCriteria = <T>(x: T) => x;
 
     const {
