@@ -1,4 +1,6 @@
 import type { Point } from '~/models/point';
+import { applyArgs, pipe } from 'ts-functional-pipe';
+import { PointOps } from '~/models/point';
 import { PlayerOps } from './index';
 
 describe('Player Operations', () => {
@@ -30,6 +32,17 @@ describe('Player Operations', () => {
       const newPlayer = PlayerOps.move(newPosition)(player);
 
       expect(newPlayer.position).toEqual(newPosition);
+    });
+  });
+
+  describe(PlayerOps.reset.name, () => {
+    it('should create a new player with the old id', () => {
+      const player = PlayerOps.new();
+      const result = applyArgs(PlayerOps).to((p) =>
+        applyArgs(player).to(pipe(p.move(PointOps.new(1, 2)), p.reset)),
+      );
+
+      expect(result).toStrictEqual({ id: player.id, position: { x: 0, y: 0 } });
     });
   });
 });

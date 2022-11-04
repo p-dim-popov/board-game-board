@@ -2,8 +2,8 @@ import type { Point } from '~/models/point';
 import { generateId } from '~/utils';
 
 export type Player = {
-  id: string
-  position: Point
+  id: string;
+  position: Point;
 };
 
 export const PlayerOps = {
@@ -14,5 +14,9 @@ export const PlayerOps = {
   move: (position: Point) => (self: Player) => ({
     ...self,
     position,
+  }),
+  reset: (player: Player): Player => ({
+    ...PlayerOps.new(),
+    id: player.id,
   }),
 };
