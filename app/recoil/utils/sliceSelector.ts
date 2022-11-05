@@ -1,4 +1,9 @@
-import type { RecoilState } from 'recoil';
+import type {
+  RecoilState,
+  RecoilValue,
+  UnwrapRecoilValue,
+  RecoilValueReadOnly,
+} from 'recoil';
 import { DefaultValue, selectorFamily } from 'recoil';
 import type { ConditionalAccess } from '~/interfaces';
 
@@ -7,18 +12,21 @@ T,
 K
 >;
 
-type SliceSelector = <T, Keys extends keyof NonNullable<T>>(
-  param: readonly [RecoilState<T>, Keys]
-) => RecoilState<SliceSelectorValue<T, Keys>>;
+type SliceSelector = <
+  R extends RecoilValue<any>,
+  Keys extends keyof NonNullable<UnwrapRecoilValue<R>>,
+>(
+  param: readonly [R, Keys]
+) => R extends RecoilState<any>
+  ? RecoilState<SliceSelectorValue<UnwrapRecoilValue<R>, Keys>>
+  : RecoilValueReadOnly<SliceSelectorValue<UnwrapRecoilValue<R>, Keys>>;
 
 export const sliceSelector: SliceSelector = selectorFamily({
   key: 'sliceSelector',
   get:
-    <T, Keys extends keyof NonNullable<T>>([state, key]: readonly [
-    RecoilState<T>,
-    Keys,
-  ]) =>
-    (opts): SliceSelectorValue<T, Keys> => opts.get(state)?.[key] as SliceSelectorValue<T, Keys>,
+    ([state, key]) =>
+      (opts) =>
+        opts.get(state)?.[key],
   set:
     ([state, key]) =>
       (opts, newValue) => {
@@ -31,6 +39,7 @@ export const sliceSelector: SliceSelector = selectorFamily({
           return;
         }
 
-        opts.set(state, { ...currentState, [key]: newValue });
+        // Heavily relying on TypeScript to forbid me use RecoilValueReadOnly with read/write hooks/utils
+        opts.set(state as RecoilState<any>, { ...currentState, [key]: newValue });
       },
-});
+}) as SliceSelector;
