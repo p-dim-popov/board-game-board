@@ -2,8 +2,9 @@ import type { Point } from '~/models/point';
 import { PointOps } from '~/models/point';
 import { createErrorClass } from '~/utils';
 
+export type BoardBoxId = `${number},${number}`;
 export type BoardBox = {
-  id: string;
+  id: BoardBoxId;
   position: Point;
   allowedNext: Point[];
 };

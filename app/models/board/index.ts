@@ -3,9 +3,11 @@ import { createErrorClass } from '~/utils';
 import type { Point } from '~/models/point';
 import { PointOps } from '~/models/point';
 import { List } from 'linqts-camelcase';
+import type { Player } from '~/models/player';
 
 export type Board = {
   boxes: BoardBox[];
+  players: Player[];
 };
 
 type BoardDimension = {
@@ -39,6 +41,7 @@ const BoardConstructError = createErrorClass('BoardConstructError', [
 export const BoardOps = {
   new: (): Board => ({
     boxes: [],
+    players: [],
   }),
   setBoxes: setBoardBoxes,
   getDimensions: (self: Board): BoardDimension => {
@@ -69,4 +72,5 @@ export const BoardOps = {
     };
   },
   ConstructError: BoardConstructError,
+  setPlayers: (players: Player[]) => (board: Board) => ({ ...board, players }),
 };

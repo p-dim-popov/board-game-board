@@ -7,11 +7,10 @@ describe('Player Operations', () => {
   describe(PlayerOps.new.name, () => {
     it('should create new player', () => {
       const player = PlayerOps.new();
-      expect(player).toHaveProperty('id', expect.any(String));
-      expect(player).toHaveProperty(
-        'position',
-        expect.objectContaining({ x: 0, y: 0 }),
-      );
+
+      expect(player.id).toEqual(expect.any(String));
+      expect(player.position).toStrictEqual({ x: 0, y: 0 });
+      expect(player.isSelected).toEqual(false);
     });
 
     it('should create new players with different ids', () => {
@@ -42,7 +41,11 @@ describe('Player Operations', () => {
         applyArgs(player).to(pipe(p.move(PointOps.new(1, 2)), p.reset)),
       );
 
-      expect(result).toStrictEqual({ id: player.id, position: { x: 0, y: 0 } });
+      expect(result).toStrictEqual({
+        id: player.id,
+        position: PointOps.new(0, 0),
+        isSelected: false,
+      });
     });
   });
 });

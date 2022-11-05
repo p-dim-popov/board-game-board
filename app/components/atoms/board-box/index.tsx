@@ -1,19 +1,32 @@
 import type { FunctionComponent } from 'react';
-import type { BoardBox } from '~/models/board/box';
+import { PlayerComponent } from '~/components/atoms/player';
+import type { Point } from '~/models/point';
 import { PointOps } from '~/models/point';
-import type { Player } from '~/models/player';
+import { useRecoilValue } from 'recoil';
+import { boardBoxState, playersState } from '~/recoil';
+import { sliceSelector } from '~/recoil/utils';
 
 type Props = {
-  box: BoardBox | undefined;
-  player: Player | undefined;
+  currentPoint: Point;
 };
 
 export const BoardBoxComponent: FunctionComponent<Props> = ({
-  box,
-  player,
-}) => (
-  <div className="h-20 w-20 border bg-blue-500">
-    {box && PointOps.serialize(box.position)}
-    {player && <div className="bg-gray-50">{player.id}</div>}
-  </div>
-);
+  currentPoint,
+}) => {
+  const boxId = useRecoilValue(
+    sliceSelector([boardBoxState(currentPoint), 'id']),
+  );
+  const players = useRecoilValue(playersState);
+  const playerIds = players
+    .where((p) => PointOps.equals(currentPoint)(p?.position))
+    .select((p) => p.id);
+
+  return (
+    <div className="h-20 w-20 border bg-blue-500">
+      {boxId &&
+        playerIds
+          .select((pid) => <PlayerComponent key={pid} playerId={pid} />)
+          .toArray()}
+    </div>
+  );
+};

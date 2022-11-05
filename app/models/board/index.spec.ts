@@ -2,6 +2,7 @@ import { BoardOps } from '~/models/board/index';
 import { applyArgs, pipe } from 'ts-functional-pipe';
 import { BoardBoxOps } from '~/models/board/box';
 import { PointOps } from '~/models/point';
+import { PlayerOps } from '~/models/player';
 
 describe('Board Operations', () => {
   describe(BoardOps.new.name, () => {
@@ -9,6 +10,12 @@ describe('Board Operations', () => {
       const board = BoardOps.new();
 
       expect(board.boxes).toEqual([]);
+    });
+
+    it('should create a board with no players', () => {
+      const board = BoardOps.new();
+
+      expect(board.players).toEqual([]);
     });
   });
 
@@ -91,5 +98,19 @@ describe('Board Operations', () => {
         expect(result).toEqual(expectedResult);
       },
     );
+  });
+
+  describe(BoardOps.setPlayers.name, () => {
+    it('should set players', () => {
+      const { players } = applyArgs(BoardOps.new()).to(
+        BoardOps.setPlayers([PlayerOps.new()]),
+      );
+
+      expect(players).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ id: expect.any(String) }),
+        ]),
+      );
+    });
   });
 });
