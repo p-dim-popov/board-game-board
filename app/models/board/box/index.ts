@@ -7,6 +7,7 @@ export type BoardBox = {
   id: BoardBoxId;
   position: Point;
   allowedNext: Point[];
+  description?: string;
 };
 
 const newBoardBox = (point: Point, allowedNext: Point[]): BoardBox => {
