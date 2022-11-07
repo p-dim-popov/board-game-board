@@ -1,32 +1,47 @@
 import { DefaultValue, selector, selectorFamily } from 'recoil';
 import type { Player, PlayerId } from '~/models/player';
-import { boardState } from '~/recoil/atoms';
 import { PlayerOps } from '~/models/player';
+import { boardState } from '~/recoil/atoms';
 import { sliceSelector } from '~/recoil/utils';
 import type { BoardBox, BoardBoxId } from '~/models/board/box';
 import type { Point } from '~/models/point';
 import { PointOps } from '~/models/point';
-import { List } from 'linqts-camelcase';
+import Lazy from 'lazy.js';
+import Sequence = LazyJS.Sequence;
 
 export const playersState = selector({
   key: 'players',
-  get: (opts) => new List(opts.get(sliceSelector([boardState, 'players']))),
-  set: (opts, newValue) =>
-    newValue instanceof DefaultValue ||
-    opts.set(sliceSelector([boardState, 'players']), newValue.toArray()),
+  get: (opts): Sequence<Player> =>
+    Lazy(opts.get(sliceSelector([boardState, 'players']))),
+  set: (opts, newValue) => {
+    if (newValue instanceof DefaultValue) {
+      return;
+    }
+
+    opts.set(sliceSelector([boardState, 'players']), newValue.toArray());
+  },
+});
+
+export const playersOnPointState = selectorFamily({
+  key: 'playersOnPoint',
+  get: (point: Point) => (opts) =>
+    opts.get(playersState).filter((p) => PointOps.equals(p.position)(point)),
 });
 
 export const playerState = selectorFamily<Player | undefined, PlayerId>({
   key: 'player',
   get: (id) => (opts) =>
-    opts.get(playersState).firstOrDefault((p) => p?.id === id),
+    opts
+      .get(playersState)
+      .filter((p) => p.id === id)
+      .first(),
   set: (id) => (opts, newValue) => {
-    const players = ((): List<Player> => {
+    const players = ((): Sequence<Player> => {
       const currentPlayers = opts.get(playersState);
 
       if (newValue instanceof DefaultValue) {
         return currentPlayers
-          .select((p) => {
+          .map((p) => {
             if (p.id !== id) {
               return p;
             }
@@ -38,14 +53,14 @@ export const playerState = selectorFamily<Player | undefined, PlayerId>({
 
             return PlayerOps.reset(maybePlayer);
           })
-          .where(Boolean) as List<Player>;
+          .filter(Boolean) as Sequence<Player>;
       }
 
       if (typeof newValue === 'undefined') {
-        return currentPlayers.where((p) => p?.id !== id);
+        return currentPlayers.filter((p) => p.id !== id);
       }
 
-      return currentPlayers.select((p) => (p.id === id ? newValue : p));
+      return currentPlayers.map((p) => (p.id === id ? newValue : p));
     })();
 
     opts.set(playersState, players);
@@ -58,14 +73,12 @@ BoardBoxId | Point
 >({
   key: 'boardBox',
   get: (param) => (opts) => {
+    const boxes = opts.get(sliceSelector([boardState, 'boxes']));
+
     if (typeof param === 'string') {
-      return opts
-        .get(sliceSelector([boardState, 'boxes']))
-        .find((b) => b.id === param);
+      return boxes.find((b) => b.id === param);
     }
 
-    return opts
-      .get(sliceSelector([boardState, 'boxes']))
-      .find((b) => PointOps.equals(param)(b.position));
+    return boxes.find((b) => PointOps.equals(param)(b.position));
   },
 });

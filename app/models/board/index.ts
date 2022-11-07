@@ -2,8 +2,8 @@ import type { BoardBox } from '~/models/board/box';
 import { createErrorClass } from '~/utils';
 import type { Point } from '~/models/point';
 import { PointOps } from '~/models/point';
-import { List } from 'linqts-camelcase';
 import type { Player } from '~/models/player';
+import Lazy from 'lazy.js';
 
 export type Board = {
   boxes: BoardBox[];
@@ -15,46 +15,44 @@ type BoardDimension = {
   right: Point;
 };
 
-const setBoardBoxes =
-  (boxes: BoardBox[]) =>
-    (self: Board): Board => {
-      if (
-        boxes.some((b) =>
-          b.allowedNext.some(
-            (an) => !boxes.some((b1) => PointOps.equals(an)(b1.position)),
-          ),
-        )
-      ) {
-        throw BoardConstructError.create('NEXT_POINT_NOT_DECLARED');
-      }
-
-      return {
-        ...self,
-        boxes,
-      };
-    };
-
-const BoardConstructError = createErrorClass('BoardConstructError', [
-  'NEXT_POINT_NOT_DECLARED',
-]);
-
 export const BoardOps = {
   new: (): Board => ({
     boxes: [],
     players: [],
   }),
-  setBoxes: setBoardBoxes,
+
+  setBoxes:
+    (boxes: BoardBox[]) =>
+      (self: Board): Board => {
+        if (
+          boxes.some((b) =>
+            b.allowedNext.some(
+              (an) => !boxes.some((b1) => PointOps.equals(an)(b1.position)),
+            ),
+          )
+        ) {
+          throw createErrorClass('BoardConstructError', [
+            'NEXT_POINT_NOT_DECLARED',
+          ]).create('NEXT_POINT_NOT_DECLARED');
+        }
+
+        return {
+          ...self,
+          boxes,
+        };
+      },
+
   getDimensions: (self: Board): BoardDimension => {
-    const enumerable = new List(self.boxes);
-    const selfCriteria = <T>(x: T) => x;
+    const enumerable = Lazy(self.boxes);
+    const byAsc = (a: number, b: number) => a - b;
 
     const {
       0: smallestX,
       length: xLength,
       [xLength - 1]: biggestX,
     } = enumerable
-      .select((x) => x.position.x)
-      .orderBy(selfCriteria)
+      .map((x) => x.position.x)
+      .sort(byAsc)
       .toArray();
 
     const {
@@ -62,8 +60,8 @@ export const BoardOps = {
       length: yLength,
       [yLength - 1]: biggestY,
     } = enumerable
-      .select((x) => x.position.y)
-      .orderBy(selfCriteria)
+      .map((x) => x.position.y)
+      .sort(byAsc)
       .toArray();
 
     return {
@@ -71,6 +69,10 @@ export const BoardOps = {
       right: PointOps.new(biggestX, biggestY),
     };
   },
-  ConstructError: BoardConstructError,
+
+  ConstructError: createErrorClass('BoardConstructError', [
+    'NEXT_POINT_NOT_DECLARED',
+  ]),
+
   setPlayers: (players: Player[]) => (board: Board) => ({ ...board, players }),
 };
