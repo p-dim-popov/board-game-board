@@ -37,7 +37,6 @@ export const PlayerComponent: FunctionComponent<Props> = ({ playerId }) => {
         )}
       >
         {playerId}
-        {isSelected?.toString()}
       </button>
     </OutsideClickHandler>
   );

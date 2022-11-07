@@ -12,9 +12,9 @@ export const BoardComponent: FunctionComponent = () => {
   const dimensions = useMemo(() => BoardOps.getDimensions(board), [board]);
 
   return (
-    <div className="flex flex-row">
+    <div className="flex h-full w-full flex-row">
       {range(dimensions.left.x, dimensions.right.x + 1).map((x) => (
-        <div key={x} className="flex flex-col-reverse">
+        <div key={x} className="flex h-full w-full flex-col-reverse">
           {range(dimensions.left.y, dimensions.right.y + 1).map((y) => {
             const currentPoint = PointOps.new(x, y);
 

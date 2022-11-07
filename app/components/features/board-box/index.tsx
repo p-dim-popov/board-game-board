@@ -4,6 +4,7 @@ import type { Point } from '~/models/point';
 import { useRecoilValue } from 'recoil';
 import { boardBoxState, playersOnPointState } from '~/recoil';
 import { sliceSelector } from '~/recoil/utils';
+import classNames from 'classnames';
 
 type Props = {
   currentPoint: Point;
@@ -20,8 +21,14 @@ export const BoardBoxComponent: FunctionComponent<Props> = ({
   ));
 
   return (
-    <div className="h-20 w-20 border bg-blue-500">
-      {boxId && players.toArray()}
+    <div
+      className={classNames(
+        'flex h-full w-full flex-col border',
+        boxId && 'bg-blue-500',
+      )}
+    >
+      <div className="h-2/3 w-full" />
+      <div className="flex h-1/3 w-full">{boxId && players.toArray()}</div>
     </div>
   );
 };
