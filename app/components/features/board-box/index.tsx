@@ -1,5 +1,5 @@
 import type { FunctionComponent } from 'react';
-import { PlayerComponent } from '~/components/atoms/player';
+import { PlayerComponent } from '~/components/features/player';
 import type { Point } from '~/models/point';
 import { useRecoilValue } from 'recoil';
 import { boardBoxState, playersOnPointState } from '~/recoil';

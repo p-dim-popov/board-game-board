@@ -1,4 +1,4 @@
-import { BoardComponent } from '~/components/organisms/board';
+import { BoardComponent } from '~/components/features/board';
 
 const Room = () => <BoardComponent />;
 

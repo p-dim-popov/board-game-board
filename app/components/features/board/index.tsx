@@ -1,6 +1,6 @@
 import type { FunctionComponent } from 'react';
 import { useMemo } from 'react';
-import { BoardBoxComponent } from '~/components/atoms/board-box';
+import { BoardBoxComponent } from '~/components/features/board-box';
 import { BoardOps } from '~/models/board';
 import { PointOps } from '~/models/point';
 import { range } from 'lodash';
