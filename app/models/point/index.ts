@@ -6,7 +6,7 @@ export type Point = {
 export type MaybePoint = Point | undefined | null;
 
 export const PointOps = {
-  new: (x: number, y: number) => ({ x, y }),
+  new: (x: number, y: number): Point => ({ x, y }),
   equals: (left: MaybePoint) => (right: MaybePoint) =>
     left === right ||
     (!!(left && right) && left.x === right.x && left.y === right.y),

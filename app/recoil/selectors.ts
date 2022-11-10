@@ -60,7 +60,17 @@ export const playerState = selectorFamily<Player | undefined, PlayerId>({
         return currentPlayers.filter((p) => p.id !== id);
       }
 
-      return currentPlayers.map((p) => (p.id === id ? newValue : p));
+      return currentPlayers.map((p) => {
+        if (p.id === id) {
+          return newValue;
+        }
+
+        if (newValue.isSelected) {
+          return { ...p, isSelected: false };
+        }
+
+        return p;
+      });
     })();
 
     opts.set(playersState, players);
@@ -80,5 +90,19 @@ BoardBoxId | Point
     }
 
     return boxes.find((b) => PointOps.equals(param)(b.position));
+  },
+});
+
+export const isBoardBoxNextState = selectorFamily({
+  key: 'isBoardBoxNext',
+  get: (param: BoardBoxId | Point) => (opts) => {
+    const boardBox = opts.get(boardBoxState(param));
+    if (!boardBox) return false;
+
+    return Lazy(opts.get(sliceSelector([boardState, 'boxes'])))
+      .filter((b) => b.allowedNext.some(PointOps.equals(boardBox.position)))
+      .some((b) =>
+        opts.get(playersOnPointState(b.position)).some((p) => p.isSelected),
+      );
   },
 });
